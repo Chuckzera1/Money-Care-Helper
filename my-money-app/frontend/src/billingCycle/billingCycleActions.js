@@ -1,24 +1,27 @@
 import axios from 'axios'
 import { toastr } from 'react-redux-toastr'
-import { reset as resetForm, initialize } from 'redux-form'
+import { initialize } from 'redux-form'
 import { showTabs, selectTab } from '../common/tab/tabActions'
 
 const BASE_URL = 'http://localhost:3003/api'
 const INITIAL_VALUES = {credits: [{}], debts: [{}]}
 
-export function getList() {
-    const request = axios.get(`${BASE_URL}/billingCycles`)
+export function getList(complement) {
+    const search = complement ? complement : ''
+    const request = axios.get(`${BASE_URL}/billingCycles/${search}`)
     return {
         type: 'BILLING_CYCLES_FETCHED',
         payload: request
     }
 }
 
+
+
 export function create(values) {
     return submit(values, 'post')
 }
 
-export function update(values) {
+export function update(values, method) {
     return submit(values, 'put')
 }
 
@@ -52,6 +55,15 @@ export function showDelete(billingCycle) {
     return [ 
         showTabs('tabDelete'),
         selectTab('tabDelete'),
+        initialize('billingCycleForm', billingCycle)
+    ]
+}
+
+export function showCreate(billingCycle) {
+    delete billingCycle._id
+    return [ 
+        showTabs('tabCreate'),
+        selectTab('tabCreate'),
         initialize('billingCycleForm', billingCycle)
     ]
 }
